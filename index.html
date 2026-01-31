@@ -3,110 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Food Rescue AI | Alex's Project</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Quick Reminder</title>
     <style>
-        body { background-color: #0f172a; color: white; font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .loader { border: 4px solid #1e293b; border-top: 4px solid #22c55e; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Variabile pentru culori (Modern & Clean) */
+        :root {
+            --bg-color: #f8f9fa;
+            --container-bg: #ffffff;
+            --text-color: #212529;
+            --accent-color: #6366f1;
+            --border-color: #e9ecef;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --container-bg: #1e293b;
+            --text-color: #f8f9fa;
+            --accent-color: #818cf8;
+            --border-color: #334155;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 50px;
+            transition: background 0.3s ease;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            background: var(--container-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 { font-size: 1.5rem; margin: 0; font-weight: 700; }
+
+        /* Buton Dark Mode */
+        #theme-toggle {
+            background: none;
+            border: 2px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        #theme-toggle:hover { border-color: var(--accent-color); }
+
+        /* Input & Buton Adaugare */
+        .input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--container-bg);
+            color: var(--text-color);
+            outline: none;
+        }
+
+        input:focus { border-color: var(--accent-color); }
+
+        #add-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Lista de Task-uri */
+        ul { list-style: none; padding: 0; }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .task-text { cursor: pointer; flex: 1; }
+        .completed { text-decoration: line-through; opacity: 0.5; }
+
+        .delete-btn {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-4 md:p-10">
+<body>
 
-    <div class="w-full max-w-2xl">
-        <header class="text-center mb-10">
-            <h1 class="text-4xl font-extrabold text-green-400 mb-2 underline decoration-wavy">Food Rescue AI 🍎</h1>
-            <p class="text-slate-400">Introdu ce ai prin frigider și lăsăm AI-ul să gătească!</p>
-        </header>
+<div class="container">
+    <header>
+        <h1>Reminders</h1>
+        <button id="theme-toggle" title="Schimbă modul">🌓</button>
+    </header>
 
-        <div class="glass p-6 rounded-3xl mb-6">
-            <label class="block text-sm font-medium mb-2 text-slate-300">Ce ingrediente ai?</label>
-            <div class="flex gap-2">
-                <input type="text" id="ingredientInput" placeholder="ex: pui, smântână, cartofi..." 
-                       class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-green-500 transition-all text-white">
-                <button onclick="generateRecipe()" 
-                        class="bg-green-500 hover:bg-green-600 text-slate-900 font-bold px-6 py-3 rounded-xl transition-all active:scale-95">
-                    Găsește Rețetă
-                </button>
-            </div>
-        </div>
-
-        <div id="loader" class="hidden flex flex-col items-center my-10">
-            <div class="loader mb-4"></div>
-            <p class="text-green-400 animate-pulse">Chef Gemini analizează ingredientele...</p>
-        </div>
-
-        <div id="recipeResult" class="hidden glass p-8 rounded-3xl leading-relaxed shadow-2xl">
-            <h2 id="recipeTitle" class="text-2xl font-bold text-green-400 mb-4 text-center border-b border-slate-700 pb-4"></h2>
-            <div id="recipeContent" class="text-slate-200 whitespace-pre-wrap text-lg"></div>
-            <div class="mt-8 flex justify-between items-center border-t border-slate-700 pt-6">
-                <button onclick="window.print()" class="text-sm text-slate-400 hover:text-white underline">Printează rețeta</button>
-            </div>
-        </div>
+    <div class="input-group">
+        <input type="text" id="task-input" placeholder="Ce ai de făcut azi?">
+        <button id="add-btn">↑</button>
     </div>
 
-    <script>
-        // Cheia ta este deja inclusă și curățată
-        const API_KEY = "AIzaSyAUM2IoTeenYiRWwOxGywAbPItesVTklkw".trim();
+    <ul id="task-list">
+        </ul>
+</div>
 
-        async function generateRecipe() {
-            const input = document.getElementById('ingredientInput');
-            const ingredients = input.value.trim();
-            const loader = document.getElementById('loader');
-            const resultDiv = document.getElementById('recipeResult');
-            const contentDiv = document.getElementById('recipeContent');
-            const titleDiv = document.getElementById('recipeTitle');
+<script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+    const input = document.getElementById('task-input');
+    const addBtn = document.getElementById('add-btn');
+    const taskList = document.getElementById('task-list');
 
-            if (!ingredients) {
-                alert("Te rog scrie măcar un ingredient!");
-                return;
-            }
+    // 1. Dark Mode Logic
+    themeToggle.addEventListener('click', () => {
+        const isDark = body.getAttribute('data-theme') === 'dark';
+        body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+        themeToggle.innerText = isDark ? '🌓' : '☀️';
+    });
 
-            loader.classList.remove('hidden');
-            resultDiv.classList.add('hidden');
+    // 2. Adăugare Task
+    function addTask() {
+        const text = input.value.trim();
+        if (text === "") return;
 
-            // URL-ul ACTUALIZAT la versiunea v1 (stabilă)
-            const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <span class="task-text">${text}</span>
+            <button class="delete-btn">Șterge</button>
+        `;
 
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: `Propune o rețetă rapidă pentru: ${ingredients}. Pune un titlu și pași clari.`
-                            }]
-                        }]
-                    })
-                });
+        // Click pe text pentru "Completat"
+        li.querySelector('.task-text').addEventListener('click', function() {
+            this.classList.toggle('completed');
+        });
 
-                const data = await response.json();
+        // Click pe ștergere
+        li.querySelector('.delete-btn').addEventListener('click', () => {
+            li.remove();
+        });
 
-                if (data.error) {
-                    throw new Error(data.error.message);
-                }
+        taskList.appendChild(li);
+        input.value = "";
+    }
 
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    let recipeText = data.candidates[0].content.parts[0].text;
-                    recipeText = recipeText.replace(/\*\*/g, '').replace(/\*/g, '•');
+    addBtn.addEventListener('click', addTask);
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') addTask();
+    });
+</script>
 
-                    titleDiv.innerText = "Rețeta ta e gata! 👨‍🍳";
-                    contentDiv.innerText = recipeText;
-                    
-                    loader.classList.add('hidden');
-                    resultDiv.classList.remove('hidden');
-                } else {
-                    throw new Error("Nu am putut genera rețeta. Încearcă alte ingrediente.");
-                }
-
-            } catch (error) {
-                console.error("Eroare detaliată:", error);
-                alert("Ups! " + error.message);
-                loader.classList.add('hidden');
-            }
-        }
-    </script>
 </body>
 </html>
