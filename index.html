@@ -3,46 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quick Reminder</title>
+    <title>Multi-Reminder Alex</title>
     <style>
-        /* Variabile pentru culori (Modern & Clean) */
         :root {
-            --bg-color: #f8f9fa;
+            --bg-color: #f0f2f5;
             --container-bg: #ffffff;
-            --text-color: #212529;
+            --text-color: #1c1e21;
             --accent-color: #6366f1;
-            --border-color: #e9ecef;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --border-color: #dddfe2;
+            --shadow: 0 10px 25px rgba(0,0,0,0.05);
+            --progress-bg: #e4e6eb;
         }
 
         [data-theme="dark"] {
-            --bg-color: #0f172a;
-            --container-bg: #1e293b;
-            --text-color: #f8f9fa;
+            --bg-color: #0b0f1a;
+            --container-bg: #161b28;
+            --text-color: #e4e6eb;
             --accent-color: #818cf8;
-            --border-color: #334155;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --border-color: #2d3343;
+            --shadow: 0 10px 25px rgba(0,0,0,0.3);
+            --progress-bg: #2d3343;
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            margin: 0;
-            padding-top: 50px;
-            transition: background 0.3s ease;
+            padding: 40px 20px;
+            transition: all 0.3s ease;
         }
 
         .container {
-            width: 90%;
-            max-width: 400px;
+            width: 100%;
+            max-width: 450px;
             background: var(--container-bg);
-            padding: 2rem;
-            border-radius: 16px;
+            border-radius: 20px;
+            padding: 25px;
             box-shadow: var(--shadow);
         }
 
@@ -50,145 +48,244 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            margin-bottom: 20px;
         }
 
-        h1 { font-size: 1.5rem; margin: 0; font-weight: 700; }
+        /* Stil Tab-uri */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: var(--progress-bg);
+            padding: 5px;
+            border-radius: 12px;
+        }
 
-        /* Buton Dark Mode */
-        #theme-toggle {
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
             background: none;
-            border: 2px solid var(--border-color);
             color: var(--text-color);
-            padding: 8px;
-            border-radius: 10px;
             cursor: pointer;
-            font-size: 1rem;
+            border-radius: 8px;
+            font-weight: 600;
             transition: 0.2s;
         }
 
-        #theme-toggle:hover { border-color: var(--accent-color); }
+        .tab-btn.active {
+            background: var(--container-bg);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
 
-        /* Input & Buton Adaugare */
-        .input-group {
+        /* Progres Bar */
+        .progress-container {
+            margin-bottom: 20px;
+            display: none; /* Ascuns implicit */
+        }
+
+        .progress-info {
             display: flex;
-            gap: 8px;
-            margin-bottom: 1.5rem;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .bar-outer {
+            width: 100%;
+            height: 10px;
+            background: var(--progress-bg);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        #bar-inner {
+            width: 0%;
+            height: 100%;
+            background: var(--accent-color);
+            transition: width 0.4s ease;
+        }
+
+        /* Inputs */
+        .input-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
         input {
             flex: 1;
             padding: 12px;
+            border-radius: 10px;
             border: 2px solid var(--border-color);
-            border-radius: 8px;
             background: var(--container-bg);
             color: var(--text-color);
             outline: none;
         }
 
-        input:focus { border-color: var(--accent-color); }
-
-        #add-btn {
+        .add-btn {
             background: var(--accent-color);
             color: white;
             border: none;
-            padding: 0 15px;
-            border-radius: 8px;
-            font-weight: bold;
+            padding: 0 20px;
+            border-radius: 10px;
             cursor: pointer;
+            font-weight: bold;
         }
 
-        /* Lista de Task-uri */
+        /* Liste */
         ul { list-style: none; padding: 0; }
 
         li {
             display: flex;
-            justify-content: space-between;
             align-items: center;
             padding: 12px;
-            border-bottom: 1px solid var(--border-color);
-            animation: fadeIn 0.3s ease;
+            background: var(--bg-color);
+            margin-bottom: 8px;
+            border-radius: 10px;
+            animation: slideIn 0.2s ease;
         }
 
-        .task-text { cursor: pointer; flex: 1; }
-        .completed { text-decoration: line-through; opacity: 0.5; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: scale(0.95); }
+        }
 
-        .delete-btn {
-            background: #ff4d4d;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 6px;
+        .content-text { flex: 1; margin-left: 10px; cursor: pointer; }
+        .done { text-decoration: line-through; opacity: 0.6; }
+
+        .delete-ico {
             cursor: pointer;
-            font-size: 0.8rem;
+            color: #ff4d4d;
+            font-weight: bold;
+            margin-left: 10px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .hidden { display: none; }
     </style>
 </head>
-<body>
+<body data-theme="light">
 
 <div class="container">
     <header>
-        <h1>Reminders</h1>
-        <button id="theme-toggle" title="Schimbă modul">🌓</button>
+        <h2 id="main-title">Lucruri de făcut</h2>
+        <button id="theme-toggle" style="background:none; border:none; cursor:pointer; font-size:1.5rem;">🌓</button>
     </header>
 
-    <div class="input-group">
-        <input type="text" id="task-input" placeholder="Ce ai de făcut azi?">
-        <button id="add-btn">↑</button>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('tasks')">Task-uri</button>
+        <button class="tab-btn" onclick="switchTab('notes')">Notițe</button>
     </div>
 
-    <ul id="task-list">
-        </ul>
+    <div id="progress-section" class="progress-container" style="display: block;">
+        <div class="progress-info">
+            <span>Progres</span>
+            <span id="progress-percent">0%</span>
+        </div>
+        <div class="bar-outer">
+            <div id="bar-inner"></div>
+        </div>
+    </div>
+
+    <div class="input-box">
+        <input type="text" id="main-input" placeholder="Adaugă ceva nou...">
+        <button class="add-btn" id="add-btn">+</button>
+    </div>
+
+    <ul id="list-container"></ul>
 </div>
 
 <script>
-    const themeToggle = document.getElementById('theme-toggle');
-    const body = document.body;
-    const input = document.getElementById('task-input');
-    const addBtn = document.getElementById('add-btn');
-    const taskList = document.getElementById('task-list');
+    let currentTab = 'tasks';
+    const tasks = [];
+    const notes = [];
 
-    // 1. Dark Mode Logic
+    const themeToggle = document.getElementById('theme-toggle');
+    const listContainer = document.getElementById('list-container');
+    const mainInput = document.getElementById('main-input');
+    const barInner = document.getElementById('bar-inner');
+    const progressPercent = document.getElementById('progress-percent');
+    const progressSection = document.getElementById('progress-section');
+
+    // Dark mode toggle
     themeToggle.addEventListener('click', () => {
+        const body = document.body;
         const isDark = body.getAttribute('data-theme') === 'dark';
         body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-        themeToggle.innerText = isDark ? '🌓' : '☀️';
     });
 
-    // 2. Adăugare Task
-    function addTask() {
-        const text = input.value.trim();
-        if (text === "") return;
-
-        const li = document.createElement('li');
-        li.innerHTML = `
-            <span class="task-text">${text}</span>
-            <button class="delete-btn">Șterge</button>
-        `;
-
-        // Click pe text pentru "Completat"
-        li.querySelector('.task-text').addEventListener('click', function() {
-            this.classList.toggle('completed');
-        });
-
-        // Click pe ștergere
-        li.querySelector('.delete-btn').addEventListener('click', () => {
-            li.remove();
-        });
-
-        taskList.appendChild(li);
-        input.value = "";
+    function switchTab(tab) {
+        currentTab = tab;
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.innerText.toLowerCase().includes(tab === 'tasks' ? 'task' : 'not')));
+        
+        document.getElementById('main-title').innerText = tab === 'tasks' ? 'Lucruri de făcut' : 'Lista mea';
+        progressSection.style.display = tab === 'tasks' ? 'block' : 'none';
+        
+        render();
     }
 
-    addBtn.addEventListener('click', addTask);
-    input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') addTask();
-    });
+    function render() {
+        listContainer.innerHTML = '';
+        const currentData = currentTab === 'tasks' ? tasks : notes;
+
+        currentData.forEach((item, index) => {
+            const li = document.createElement('li');
+            
+            // Checkbox doar pentru tab-ul de task-uri
+            const checkbox = currentTab === 'tasks' ? 
+                `<input type="checkbox" ${item.completed ? 'checked' : ''} onchange="toggleItem(${index})">` : '';
+
+            li.innerHTML = `
+                ${checkbox}
+                <span class="content-text ${item.completed ? 'done' : ''}" onclick="toggleItem(${index})">${item.text}</span>
+                <span class="delete-ico" onclick="deleteItem(${index})">✕</span>
+            `;
+            listContainer.appendChild(li);
+        });
+
+        if (currentTab === 'tasks') updateProgress();
+    }
+
+    function updateProgress() {
+        if (tasks.length === 0) {
+            barInner.style.width = '0%';
+            progressPercent.innerText = '0%';
+            return;
+        }
+        const completed = tasks.filter(t => t.completed).length;
+        const percent = Math.round((completed / tasks.length) * 100);
+        barInner.style.width = percent + '%';
+        progressPercent.innerText = percent + '%';
+    }
+
+    function addItem() {
+        const val = mainInput.value.trim();
+        if (!val) return;
+
+        const newItem = { text: val, completed: false };
+        if (currentTab === 'tasks') tasks.push(newItem);
+        else notes.push(newItem);
+
+        mainInput.value = '';
+        render();
+    }
+
+    function toggleItem(index) {
+        const data = currentTab === 'tasks' ? tasks : notes;
+        data[index].completed = !data[index].completed;
+        render();
+    }
+
+    function deleteItem(index) {
+        const data = currentTab === 'tasks' ? tasks : notes;
+        data.splice(index, 1);
+        render();
+    }
+
+    document.getElementById('add-btn').addEventListener('click', addItem);
+    mainInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addItem(); });
+
+    // Render inițial
+    render();
 </script>
 
 </body>
