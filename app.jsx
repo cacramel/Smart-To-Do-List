@@ -6,8 +6,8 @@ const App = () => {
 
   const fetchActivity = async (isRandom = false) => {
     const url = isRandom 
-      ? 'https://back-ul-tau.onrender.com/random' 
-      : `https://back-ul-tau.onrender.com/get-activity?vibe=${filters.vibe}&buget=${filters.buget}&timp=${filters.timp}`;
+      ? 'https://hai-pe-afara.onrender.com' 
+      : `https://hai-pe-afara.onrender.com/get-activity?vibe=${filters.vibe}&buget=${filters.buget}&timp=${filters.timp}`;
     
     const res = await fetch(url);
     const data = await res.json();
@@ -51,5 +51,6 @@ const App = () => {
     </div>
   );
 };
+
 
 export default App;
