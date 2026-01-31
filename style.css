@@ -1,0 +1,109 @@
+/* Resetare de bază pentru un look de aplicație mobilă */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Work Sans', 'Manrope', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: #000000;
+    color: #ffffff;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    overflow: hidden; /* Evită scroll-ul aiurea pe mobil */
+}
+
+#root {
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+}
+
+/* Titlul cu efect de neon portocaliu */
+h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #FF5F1F;
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: -2px;
+    margin-bottom: 30px;
+    text-shadow: 0 0 15px rgba(255, 95, 31, 0.4);
+}
+
+/* Cardul cu blur (Glassmorphism) */
+.glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Stil pentru Dropdown-uri */
+select {
+    background: #111;
+    color: #00D9FF; /* Albastru electric */
+    border: 1px solid #333;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 1rem;
+    outline: none;
+    appearance: none; /* Scoate săgeata default */
+}
+
+/* Butonul principal Portocaliu */
+button.main-btn {
+    background: #FF5F1F;
+    color: #000;
+    border: none;
+    padding: 18px;
+    border-radius: 15px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+button.main-btn:active {
+    transform: scale(0.95);
+    background: #e5551b;
+}
+
+/* Butonul de Random/Indecis */
+button.secondary-btn {
+    background: transparent;
+    color: #00D9FF;
+    border: 1px border #00D9FF;
+    padding: 10px;
+    font-style: italic;
+    cursor: pointer;
+}
+
+/* Zona unde apare activitatea găsită */
+.result-box {
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 20px;
+    border: 2px solid #00D9FF;
+    background: rgba(0, 217, 255, 0.05);
+    text-align: center;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.result-text {
+    font-size: 1.2rem;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
