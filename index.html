@@ -3,106 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>SYSTEM_ROOT_v4</title>
+    <title>Focus Hub Pro</title>
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; font-family: 'Courier New', monospace; overflow: hidden; color: #0f0; }
+        :root { --bg: #0a0a0a; --card: #161616; --accent: #30d158; --text: #ffffff; }
+        body { background: var(--bg); color: var(--text); font-family: -apple-system, system-ui, sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         
-        /* Fundal Matrix */
-        #canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
+        .container { width: 100%; max-width: 400px; }
+        .card { background: var(--card); border-radius: 24px; padding: 20px; margin-bottom: 20px; border: 1px solid #222; }
+        
+        h2 { font-weight: 800; letter-spacing: -1px; margin-bottom: 25px; }
 
-        /* Desktop */
-        .desktop { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 30px; }
-        .icon { text-align: center; cursor: pointer; }
-        .icon img { width: 50px; height: 50px; display: block; margin: 0 auto 5px; filter: drop-shadow(0 0 5px #0f0); }
-        .icon span { font-size: 10px; font-weight: bold; }
+        /* To-Do List Styling */
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { flex: 1; background: #222; border: 1px solid #333; padding: 12px 15px; border-radius: 12px; color: white; font-size: 1rem; outline: none; transition: 0.2s; }
+        input:focus { border-color: var(--accent); }
+        
+        .add-btn { background: var(--accent); color: black; border: none; width: 45px; height: 45px; border-radius: 12px; font-size: 1.5rem; font-weight: bold; cursor: pointer; }
 
-        /* Ferestre */
-        .window { 
-            position: absolute; top: 20%; left: 5%; width: 90%; background: #050505; 
-            border: 1px solid #0f0; border-radius: 5px; display: none; z-index: 10;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
-        }
-        .win-header { background: #0f0; color: #000; padding: 5px 10px; font-weight: bold; display: flex; justify-content: space-between; font-size: 12px; }
-        .win-body { padding: 15px; min-height: 150px; font-size: 13px; }
-        .close-btn { cursor: pointer; }
+        .task-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: #1c1c1e; border-radius: 14px; margin-bottom: 8px; transition: 0.3s; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } }
 
-        /* Taskbar */
-        .taskbar { position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.8); border-top: 1px solid #333; height: 40px; display: flex; align-items: center; padding: 0 10px; font-size: 10px; }
+        .checkbox { width: 22px; height: 22px; border: 2px solid #444; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .checked .checkbox { background: var(--accent); border-color: var(--accent); }
+        .checked .checkbox::after { content: '✓'; color: black; font-size: 14px; font-weight: bold; }
+
+        .task-text { flex: 1; font-size: 0.95rem; transition: 0.2s; }
+        .checked .task-text { color: #666; text-decoration: line-through; }
+
+        .delete-btn { color: #ff453a; font-size: 1.2rem; padding: 0 5px; cursor: pointer; opacity: 0.5; }
+        .delete-btn:hover { opacity: 1; }
+
+        /* Progress Bar */
+        .progress-container { height: 6px; background: #222; border-radius: 3px; margin-bottom: 10px; overflow: hidden; }
+        #progress-bar { height: 100%; background: var(--accent); width: 0%; transition: 0.5s ease; }
     </style>
 </head>
 <body>
 
-    <canvas id="canvas"></canvas>
+    <div class="container">
+        <h2>Focus Hub</h2>
 
-    <div class="desktop">
-        <div class="icon" onclick="openWin('scanner')">
-            <div style="font-size: 40px;">👁️</div>
-            <span>BIO_SCAN</span>
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <span style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold;">Daily Tasks</span>
+                <span id="progress-text" style="font-size: 0.8rem; color: var(--accent);">0%</span>
+            </div>
+            
+            <div class="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="taskInput" placeholder="Ce planuri ai azi?" onkeypress="if(event.key==='Enter') addTask()">
+                <button class="add-btn" onclick="addTask()">+</button>
+            </div>
+
+            <div id="taskList">
+                </div>
         </div>
-        <div class="icon" onclick="openWin('vault')">
-            <div style="font-size: 40px;">📂</div>
-            <span>LEAKS</span>
-        </div>
-        <div class="icon" onclick="openWin('terminal')">
-            <div style="font-size: 40px;">📟</div>
-            <span>TERMINAL</span>
-        </div>
+
+        <p style="color: #444; font-size: 0.75rem; text-align: center;">Task-urile sunt salvate automat pe acest dispozitiv.</p>
     </div>
-
-    <div id="scanner" class="window">
-        <div class="win-header"><span>BIO_SCANNER_v1</span><span class="close-btn" onclick="closeWin('scanner')">X</span></div>
-        <div class="win-body">
-            <p id="scan-status">Așteptare subiect...</p>
-            <button onclick="startDeepScan()" style="background:#0f0; border:none; padding:10px; width:100%; font-family:inherit;">START SCAN</button>
-        </div>
-    </div>
-
-    <div id="terminal" class="window">
-        <div class="win-header"><span>CMD_PROMPT</span><span class="close-btn" onclick="closeWin('terminal')">X</span></div>
-        <div class="win-body">
-            <div id="term-out">Initializing kernel...<br>Accessing Render backend...<br>Ready._</div>
-        </div>
-    </div>
-
-    <div class="taskbar">SYSTEM STATUS: ENCRYPTED | CPU: 12% | RAM: 4.2GB</div>
 
     <script>
-        // Matrix Background Effect
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        const fontSize = 10;
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
+        let tasks = JSON.parse(localStorage.getItem('smartTasks')) || [];
 
-        function draw() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#0f0";
-            ctx.font = fontSize + "px arial";
-            for (let i = 0; i < drops.length; i++) {
-                const text = letters[Math.floor(Math.random() * letters.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const text = input.value.trim();
+            
+            if (text) {
+                tasks.push({ text: text, completed: false });
+                input.value = '';
+                saveAndRender();
             }
         }
-        setInterval(draw, 33);
 
-        // Window Controls
-        function openWin(id) { document.getElementById(id).style.display = 'block'; }
-        function closeWin(id) { document.getElementById(id).style.display = 'none'; }
-
-        function startDeepScan() {
-            const status = document.getElementById('scan-status');
-            status.innerText = "ACCESARE REȚEA NEURALĂ...";
-            if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
-            setTimeout(() => {
-                status.innerText = "VERDICT: Subiectul minte prin omisiune. Risc de trădare: 87%.";
-            }, 2000);
+        function toggleTask(index) {
+            tasks[index].completed = !tasks[index].completed;
+            saveAndRender();
         }
+
+        function deleteTask(index) {
+            tasks.splice(index, 1);
+            saveAndRender();
+        }
+
+        function saveAndRender() {
+            localStorage.setItem('smartTasks', JSON.stringify(tasks));
+            renderTasks();
+        }
+
+        function renderTasks() {
+            const list = document.getElementById('taskList');
+            list.innerHTML = '';
+            
+            let completedCount = 0;
+
+            tasks.forEach((task, i) => {
+                if (task.completed) completedCount++;
+                
+                const taskDiv = document.createElement('div');
+                taskDiv.className = `task-item ${task.completed ? 'checked' : ''}`;
+                taskDiv.innerHTML = `
+                    <div class="checkbox" onclick="toggleTask(${i})"></div>
+                    <div class="task-text" onclick="toggleTask(${i})">${task.text}</div>
+                    <div class="delete-btn" onclick="deleteTask(${i})">✕</div>
+                `;
+                list.appendChild(taskDiv);
+            });
+
+            // Update Progress
+            const progress = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
+            document.getElementById('progress-bar').style.width = progress + '%';
+            document.getElementById('progress-text').innerText = progress + '%';
+        }
+
+        // Inițializare
+        renderTasks();
     </script>
 </body>
 </html>
