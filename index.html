@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reminders App</title>
+    <title>Alex Productivity Suite</title>
     <style>
         :root {
             --sidebar-bg: #ffffff;
-            --main-bg: #f8f9fa;
-            --text-color: #1a1a1a;
-            --accent: #6366f1;
+            --main-bg: #f3f4f6;
+            --text-color: #1f2937;
+            --accent: #4f46e5;
             --border: #e5e7eb;
             --item-bg: #ffffff;
             --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
@@ -18,45 +18,41 @@
         [data-theme="dark"] {
             --sidebar-bg: #111827;
             --main-bg: #030712;
-            --text-color: #f3f4f6;
-            --accent: #818cf8;
+            --text-color: #f9fafb;
+            --accent: #6366f1;
             --border: #374151;
             --item-bg: #1f2937;
-            --shadow: 0 4px 6px -1px rgba(0,0,0,0.5);
+            --shadow: 0 10px 15px -3px rgba(0,0,0,0.5);
         }
 
         body {
             margin: 0;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             display: flex;
             height: 100vh;
             background-color: var(--main-bg);
             color: var(--text-color);
-            transition: 0.3s;
+            transition: background 0.3s;
         }
 
-        /* --- SIDEBAR STÂNGA --- */
+        /* SIDEBAR */
         .sidebar {
-            width: 240px;
+            width: 260px;
             background: var(--sidebar-bg);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            padding: 20px;
-            gap: 10px;
+            padding: 30px 20px;
+            box-sizing: border-box;
         }
 
-        .sidebar h2 {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            padding-left: 10px;
-        }
+        .sidebar h2 { font-size: 1.4rem; margin-bottom: 30px; color: var(--accent); }
 
         .nav-btn {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 15px;
+            gap: 15px;
+            padding: 14px 18px;
             border: none;
             border-radius: 12px;
             background: transparent;
@@ -64,111 +60,115 @@
             font-weight: 600;
             cursor: pointer;
             transition: 0.2s;
-            text-align: left;
+            margin-bottom: 10px;
         }
 
         .nav-btn:hover { background: var(--main-bg); }
-
-        .nav-btn.active {
-            background: var(--accent);
-            color: white;
-        }
+        .nav-btn.active { background: var(--accent); color: white; }
 
         .theme-switch {
             margin-top: auto;
-            padding: 10px;
+            padding: 12px;
             cursor: pointer;
+            border: 2px solid var(--border);
+            border-radius: 12px;
             text-align: center;
-            border: 1px solid var(--border);
-            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: bold;
         }
 
-        /* --- CONȚINUT DREAPTA --- */
-        .main-content {
-            flex: 1;
-            padding: 40px;
-            overflow-y: auto;
-            display: flex;
-            justify-content: center;
-        }
+        /* MAIN CONTENT */
+        .main-content { flex: 1; padding: 50px; overflow-y: auto; display: flex; justify-content: center; }
+        .content-container { width: 100%; max-width: 650px; }
 
-        .content-container {
-            width: 100%;
-            max-width: 600px;
-        }
+        h1 { font-size: 2rem; margin-bottom: 30px; }
 
-        /* Progres */
         .progress-card {
             background: var(--item-bg);
-            padding: 20px;
-            border-radius: 16px;
+            padding: 25px;
+            border-radius: 20px;
             box-shadow: var(--shadow);
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
-        .bar-bg { height: 8px; background: var(--border); border-radius: 10px; margin-top: 10px; }
-        #bar-fill { height: 100%; background: var(--accent); border-radius: 10px; width: 0%; transition: 0.5s; }
+        .bar-bg { height: 12px; background: var(--border); border-radius: 20px; margin-top: 15px; overflow: hidden; }
+        #bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        /* Input Area */
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
+        .input-group { display: flex; gap: 12px; margin-bottom: 30px; }
         input {
             flex: 1;
-            padding: 14px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: 14px;
+            border: 2px solid var(--border);
             background: var(--item-bg);
             color: var(--text-color);
             outline: none;
+            font-size: 1rem;
         }
+        input:focus { border-color: var(--accent); }
 
         .add-btn {
             background: var(--accent);
             color: white;
             border: none;
-            padding: 0 20px;
-            border-radius: 12px;
+            padding: 0 25px;
+            border-radius: 14px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 1rem;
         }
 
-        /* Listă Items */
         ul { list-style: none; padding: 0; }
         li {
             background: var(--item-bg);
-            margin-bottom: 10px;
-            padding: 15px;
-            border-radius: 12px;
+            margin-bottom: 12px;
+            padding: 18px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             gap: 15px;
             box-shadow: var(--shadow);
-            animation: fadeIn 0.3s ease;
+            transition: transform 0.2s;
         }
+        li:hover { transform: translateX(5px); }
 
-        .done-text { text-decoration: line-through; opacity: 0.5; }
-        .delete-btn { margin-left: auto; color: #ff4d4d; cursor: pointer; font-weight: bold; }
+        .item-text { flex: 1; cursor: pointer; font-size: 1.05rem; }
+        .done-text { text-decoration: line-through; opacity: 0.4; }
+        
+        .delete-btn { 
+            background: #fee2e2; 
+            color: #ef4444; 
+            padding: 8px 12px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .delete-btn:hover { background: #ef4444; color: white; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
+
+        /* Custom Checkbox */
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
     </style>
 </head>
 <body data-theme="light">
 
     <div class="sidebar">
-        <h2>App Alex</h2>
+        <h2>Workspace</h2>
         <button id="btn-tasks" class="nav-btn active" onclick="setView('tasks')">
-            <span>✅</span> Task-uri
+            <span>📅</span> Task-uri
         </button>
         <button id="btn-notes" class="nav-btn" onclick="setView('notes')">
             <span>📝</span> Liste Simple
         </button>
         
-        <div class="theme-switch" onclick="toggleTheme()">🌓 Schimbă Tema</div>
+        <div class="theme-switch" onclick="toggleTheme()">🌓 Toggle Mode</div>
     </div>
 
     <div class="main-content">
@@ -176,16 +176,16 @@
             <h1 id="view-title">Task-uri</h1>
 
             <div id="progress-wrapper" class="progress-card">
-                <div style="display: flex; justify-content: space-between; font-weight: 600;">
-                    <span>Progres Zilnic</span>
-                    <span id="perc-text">0%</span>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 700; color: var(--accent);">PROGRES</span>
+                    <span id="perc-text" style="font-weight: 800;">0%</span>
                 </div>
                 <div class="bar-bg"><div id="bar-fill"></div></div>
             </div>
 
             <div class="input-group">
-                <input type="text" id="user-input" placeholder="Adaugă un task nou...">
-                <button class="add-btn" onclick="addItem()">Adaugă</button>
+                <input type="text" id="user-input" placeholder="Ce planuri ai?">
+                <button class="add-btn" onclick="addItem()">+</button>
             </div>
 
             <ul id="list"></ul>
@@ -194,22 +194,22 @@
 
     <script>
         let view = 'tasks';
-        let tasks = [];
-        let notes = [];
+        // Încărcăm datele din LocalStorage la pornire
+        let tasks = JSON.parse(localStorage.getItem('alex_tasks')) || [];
+        let notes = JSON.parse(localStorage.getItem('alex_notes')) || [];
 
         function setView(newView) {
             view = newView;
-            
-            // Update butoane sidebar
             document.getElementById('btn-tasks').classList.toggle('active', view === 'tasks');
             document.getElementById('btn-notes').classList.toggle('active', view === 'notes');
-            
-            // Update interfață
             document.getElementById('view-title').innerText = view === 'tasks' ? 'Task-uri' : 'Liste Simple';
             document.getElementById('progress-wrapper').classList.toggle('hidden', view === 'notes');
-            document.getElementById('user-input').placeholder = view === 'tasks' ? "Ce ai de făcut?" : "Adaugă în listă...";
-            
             render();
+        }
+
+        function saveData() {
+            localStorage.setItem('alex_tasks', JSON.stringify(tasks));
+            localStorage.setItem('alex_notes', JSON.stringify(notes));
         }
 
         function addItem() {
@@ -221,6 +221,7 @@
             else notes.push(item);
 
             input.value = '';
+            saveData();
             render();
         }
 
@@ -231,16 +232,15 @@
 
             data.forEach((item, index) => {
                 const li = document.createElement('li');
-                
                 const check = view === 'tasks' ? 
                     `<input type="checkbox" ${item.completed ? 'checked' : ''} onchange="toggleItem(${index})">` : '';
 
                 li.innerHTML = `
                     ${check}
-                    <span class="${item.completed ? 'done-text' : ''}" style="flex:1; cursor:pointer;" onclick="toggleItem(${index})">
+                    <span class="item-text ${item.completed ? 'done-text' : ''}" onclick="toggleItem(${index})">
                         ${item.text}
                     </span>
-                    <span class="delete-btn" onclick="deleteItem(${index})">Șterge</span>
+                    <div class="delete-btn" onclick="deleteItem(${index})">Șterge</div>
                 `;
                 listEl.appendChild(li);
             });
@@ -251,12 +251,14 @@
         function toggleItem(idx) {
             const data = (view === 'tasks') ? tasks : notes;
             data[idx].completed = !data[idx].completed;
+            saveData();
             render();
         }
 
         function deleteItem(idx) {
             const data = (view === 'tasks') ? tasks : notes;
             data.splice(idx, 1);
+            saveData();
             render();
         }
 
@@ -270,13 +272,16 @@
 
         function toggleTheme() {
             const body = document.body;
-            body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+            const current = body.getAttribute('data-theme');
+            body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
         }
 
-        // Enter key support
         document.getElementById('user-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') addItem();
         });
+
+        // Randare inițială
+        render();
     </script>
 </body>
 </html>
